@@ -1,4 +1,4 @@
-import { AppBar, Toolbar } from "@mui/material";
+import { AppBar, Button, Toolbar, Container } from "@mui/material";
 import pokedexLogo from "../assets/pokédex_logo.png";
 
 export default function Header() {
@@ -9,6 +9,12 @@ export default function Header() {
                     <div className="image-container">
                         <img src = {pokedexLogo} alt = "Logo" height={100}/>
                     </div>
+                </Toolbar>
+                <Toolbar>
+                    <Container>
+                        <Button color="inherit" href="/">Inicio</Button>
+                        <Button color="inherit" href="/add-pokemon">Agregar Pokemon</Button> 
+                    </Container>
                 </Toolbar>
             </AppBar>
         </div>    
