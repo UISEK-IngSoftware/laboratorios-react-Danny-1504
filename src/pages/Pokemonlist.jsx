@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import PokemonCard from "./PokemonCard";
+import PokemonCard from "../componets/PokemonCard";
 import { useEffect,useState } from "react";
 import { fetchPokemons } from "../services/PokemonService";
 
