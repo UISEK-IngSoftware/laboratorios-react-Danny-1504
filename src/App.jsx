@@ -11,9 +11,10 @@ import Login from './pages/Login'
 function App() {
   return (
     <>
-      <Header />
+      
       <Container>
         <BrowserRouter>
+        <Header />
           <Routes>
             <Route path ='/' element = {<Pokemonlist/>}/>
             <Route path='/add-pokemon' element = {<PokemonForm/>} />
