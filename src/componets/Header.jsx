@@ -4,40 +4,59 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../services/userService";
 
 export default function Header() {
-    const isLoggedIn = localStorage.getItem("access_token") !== null;
-    const navigate =useNavigate();
+    const navigate = useNavigate();
+    const isLoggedIn = !!localStorage.getItem("access_token");
 
     const handleLogout = () => {
         logout();
-        navigate('/');
-    }
-
+        navigate("/");
+    };
 
     return (
         <Container>
-        <div className="pokedex-navbar">
             <AppBar position="static">
                 <Toolbar>
-                    <div className="image-container">
-                        <img src = {pokedexLogo} alt = "Logo" height={100}/>
-                    </div>
+                    <img
+                        src={pokedexLogo}
+                        alt="Logo"
+                        height={80}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => navigate("/")}
+                    />
                 </Toolbar>
-                <Toolbar >
-                    
-                        <Button color="inherit" href="/">Inicio</Button>
-                        {isLoggedIn && (
-                            <>
-                                <Button color="inherit" href="/add-pokemon">Agregar Pokemon</Button>
-                                <Button color="inherit" onClick={handleLogout}>Cerrar Sesión</Button>
-                            </>
-                        )}
-                        {!isLoggedIn && (
-                            <Button color="inherit" href="/login">Iniciar Sesión</Button>
-                        )}
 
-                 </Toolbar>
+                <Toolbar>
+                    <Button color="inherit" onClick={() => navigate("/")}>
+                        Inicio
+                    </Button>
+
+                    <Button color="inherit" onClick={() => navigate("/trainers")}>
+                        Entrenadores
+                    </Button>
+
+                    {isLoggedIn ? (
+                        <>
+                            <Button
+                                color="inherit"
+                                onClick={() => navigate("/add-pokemon")}
+                            >
+                                Agregar Pokémon
+                            </Button>
+
+                            <Button color="inherit" onClick={handleLogout}>
+                                Cerrar sesión
+                            </Button>
+                        </>
+                    ) : (
+                        <Button
+                            color="inherit"
+                            onClick={() => navigate("/login")}
+                        >
+                            Iniciar sesión
+                        </Button>
+                    )}
+                </Toolbar>
             </AppBar>
-        </div>
-        </Container>    
+        </Container>
     );
 }
