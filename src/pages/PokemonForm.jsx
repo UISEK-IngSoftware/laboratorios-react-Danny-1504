@@ -2,10 +2,11 @@ import { Button, TextField, Typography, Box } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPokemon, fetchPokemonById, updatePokemon } from "../services/PokemonService";
+import Spinner from "../componets/Spinner";   // 👈 importamos Spinner
 
 export default function PokemonForm() {
 
-    const { id } = useParams();               // ← si existe, estamos editando
+    const { id } = useParams();               
     const navigate = useNavigate();
 
     const [pokemonData, setPokemonData] = useState({
@@ -16,15 +17,27 @@ export default function PokemonForm() {
         picture: null,
     });
 
+    const [loading, setLoading] = useState(false); // 👈 estado de carga
+
     // Cargar datos cuando estamos editando
     useEffect(() => {
         if (id) {
-            fetchPokemonById(id).then(data => {
-                setPokemonData({
-                    ...data,
-                    picture: data.picture   // base64 ya guardado
+            setLoading(true); // 👈 empieza carga
+
+            fetchPokemonById(id)
+                .then(data => {
+                    setPokemonData({
+                        ...data,
+                        picture: data.picture
+                    });
+                })
+                .catch(error => {
+                    console.error("Error cargando Pokémon", error);
+                    alert("Error cargando datos del Pokémon");
+                })
+                .finally(() => {
+                    setLoading(false); // 👈 termina carga
                 });
-            });
         }
     }, [id]);
 
@@ -46,6 +59,7 @@ export default function PokemonForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // 👈 empieza carga al guardar
 
         try {
             if (id) {
@@ -62,8 +76,15 @@ export default function PokemonForm() {
         } catch (error) {
             console.error("Error guardando el Pokémon", error);
             alert("Ocurrió un error");
+        } finally {
+            setLoading(false); // 👈 termina carga
         }
     };
+
+    // Si está cargando, mostramos spinner
+    if (loading) {
+        return <Spinner />;
+    }
 
     return (
         <>
@@ -71,15 +92,17 @@ export default function PokemonForm() {
                 {id ? "Editar Pokémon" : "Crear Pokémon"}
             </Typography>
 
-            <Box component="form"
+            <Box
+                component="form"
                 onSubmit={handleSubmit}
-                sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}
             >
                 <TextField
                     label="Nombre"
                     name="name"
                     value={pokemonData.name}
                     onChange={handleChange}
+                    required
                 />
 
                 <TextField
@@ -87,6 +110,7 @@ export default function PokemonForm() {
                     name="type"
                     value={pokemonData.type}
                     onChange={handleChange}
+                    required
                 />
 
                 <TextField
@@ -95,6 +119,7 @@ export default function PokemonForm() {
                     type="number"
                     value={pokemonData.weigth}
                     onChange={handleChange}
+                    required
                 />
 
                 <TextField
@@ -103,6 +128,7 @@ export default function PokemonForm() {
                     type="number"
                     value={pokemonData.Heigth}
                     onChange={handleChange}
+                    required
                 />
 
                 <input
@@ -112,11 +138,14 @@ export default function PokemonForm() {
                     onChange={handleChange}
                 />
 
-                <Button type="submit" variant="contained">
-                    {id ? "Actualizar" : "Guardar"}
+                <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={loading}   // 👈 bloqueamos botón
+                >
+                    {loading ? "Guardando..." : (id ? "Actualizar" : "Guardar")}
                 </Button>
             </Box>
         </>
     );
 }
-

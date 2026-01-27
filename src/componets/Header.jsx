@@ -1,16 +1,27 @@
+import { useState } from "react";
 import { AppBar, Button, Toolbar, Container } from "@mui/material";
 import pokedexLogo from "../assets/pokédex_logo.png";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../services/userService";
+import Spinner from "./Spinner";
 
 export default function Header() {
+    const [loading, setLoading]=useState(false);
     const navigate = useNavigate();
     const isLoggedIn = !!localStorage.getItem("access_token");
 
     const handleLogout = () => {
+        setLoading(true);
         logout();
+        setLoading(false);
         navigate("/");
     };
+
+    if (loading) {
+        return(
+            <Spinner/>
+        );
+    }
 
     return (
         <Container>
